@@ -1,0 +1,26 @@
+<?php 
+
+include('../connection.php');
+
+class Data{}
+
+$query = " SELECT * FROM (
+SELECT Device_Alias, COUNT(Device_Alias) as totDevice FROM alarm GROUP BY Device_Alias 
+ORDER BY totDevice  DESC ) a WHERE totDevice !='1' ";
+$result = mysqli_query($dbc, $query);
+if (mysqli_num_rows($result) >= 1) {
+    while($data = mysqli_fetch_array($result)){
+        $myArray[]=$data;
+    }
+
+    $response = new data();
+    $response->success = TRUE;
+    $response->message = "Berhasil Mendapatkan Data";
+    $response->data = $myArray;
+    die(json_encode($response));
+}else{
+    $response = new data();
+    $response->success = FALSE;
+    $response->message = "Tidak ada Data";
+    die(json_encode($response));
+}
